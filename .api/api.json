@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "pay-sprint",
+      "source": "@pay-sprint/v1.0#s0f16lryv9y0m",
+      "integrity": "sha512-Jik+zN0n8nb26ZfwV1fezDaJZ9LthM0DNzMmM8es6QPtDYemhd2KiGwi2RZOBVNjADENA6Ht9kjnlkLDze6C1g==",
+      "installerVersion": "6.1.1"
+    }
+  ]
+}
