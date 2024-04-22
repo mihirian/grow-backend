@@ -18,7 +18,7 @@ app.use(morgan('tiny'));
 
 app.use('/api/users', userRoutes); // Setting up user routes
 
-app.use('/panVerification', panVerificationRoutes);
+app.use('/pan', panVerificationRoutes);
 
 
 app.use(errorHandler); // Global error handler

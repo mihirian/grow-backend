@@ -7,7 +7,6 @@ const PanVerification = sequelize.define('pan_verification', {
   pannumber: { type: DataTypes.STRING, allowNull: true },
   refid: { type: DataTypes.INTEGER, allowNull: true },
   client_id: { type: DataTypes.STRING, allowNull: true },
-  pan_number: { type: DataTypes.STRING, allowNull: true },
   full_name: { type: DataTypes.STRING, allowNull: true },
   category: { type: DataTypes.STRING, allowNull: true },
   statuscode: { type: DataTypes.INTEGER, allowNull: true },

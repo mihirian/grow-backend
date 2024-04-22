@@ -18,7 +18,7 @@ const checkExistingVerification = async (panNumber) => {
 };
 
 // Function to make the API request to verify PAN number
-const makeApiRequest = async (panNumber) => {
+const makeVerifyPanNumberApiRequest = async (panNumber) => {
   try {
     const headers = getHeaders();
     const requestData = {
@@ -35,6 +35,23 @@ const makeApiRequest = async (panNumber) => {
   }
 };
 
+const makePanDetailsInfoApiRequest = async (id_number) => {
+  try {
+    const headers = getHeaders();
+    const requestData = {
+      id_number: id_number      ,
+      refid: Math.floor(Math.random() * 1000000000)
+    };
+    
+    // Make the axios request
+    const response = await axios.post('https://uat.paysprint.in/sprintverify-uat/api/v1/verification/pandetails_verify', requestData, { headers });
+    return response.data;
+  } catch (error) {
+    console.error("Error making API request:", error);
+    throw error;
+  }
+};
+
 // Function to save PAN verification result to the database
 const saveVerificationResult = async (requestData, responseData) => {
   try {
@@ -44,7 +61,6 @@ const saveVerificationResult = async (requestData, responseData) => {
       pannumber: requestData.pannumber,
       refid: responseData.reference_id,
       client_id: responseData.data.client_id,
-      pan_number: responseData.data.pan_number,
       full_name: responseData.data.full_name,
       category: responseData.data.category,
       statuscode: responseData.statuscode,
@@ -71,7 +87,7 @@ exports.verifyPanNumber = async (panNumber) => {
     }
 
     // If verification information doesn't exist, proceed with API request
-    const response = await makeApiRequest(panNumber);
+    const response = await makeVerifyPanNumberApiRequest(panNumber);
 
     // Store the response in the database
     await saveVerificationResult({ pannumber: panNumber }, response);
@@ -81,4 +97,18 @@ exports.verifyPanNumber = async (panNumber) => {
     console.error("Error verifying PAN number:", error);
     throw error;
   }
+};
+
+exports.pandetailsinfo =async (id_number)=>{
+  try{
+    console.log("helloe");
+    const response = await makePanDetailsInfoApiRequest(id_number);
+    return response;
+
+
+  }catch (error) {
+    console.error("Error verifying PAN number:", error);
+    throw error;
+  }
+  
 };
