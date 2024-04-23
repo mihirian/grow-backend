@@ -1,62 +1,21 @@
-// panVerificationService.js
-const axios = require('axios');
-const { getHeaders } = require('../../common/paysprintHeaderUtils');
-const PanVerification = require('../../models/panVerificationModel');
+const { makePostRequest } = require('../../common/apiService');
+const { findVerificationByPan, saveVerificationResult } = require('../../dao/panDatabaseService');
 
-// Function to check if PAN verification information already exists in the database
-const checkExistingVerification = async (panNumber) => {
+exports.verifyPanNumber = async (panNumber) => {
   try {
-    return await PanVerification.findOne({
-      where: {
-        pannumber: panNumber
-      }
-    });
-  } catch (error) {
-    console.error("Error checking existing verification:", error);
-    throw error;
-  }
-};
+    const existingVerification = await findVerificationByPan(panNumber);
+    if (existingVerification) {
+      console.log("Verification information already exists in the database.");
+      return existingVerification.response;
+    }
 
-// Function to make the API request to verify PAN number
-const makeVerifyPanNumberApiRequest = async (panNumber) => {
-  try {
-    const headers = getHeaders();
     const requestData = {
       pannumber: panNumber,
       refid: Math.floor(Math.random() * 1000000000)
     };
-    
-    // Make the axios request
-    const response = await axios.post('https://uat.paysprint.in/sprintverify-uat/api/v1/verification/pan_verify', requestData, { headers });
-    return response.data;
-  } catch (error) {
-    console.error("Error making API request:", error);
-    throw error;
-  }
-};
+    const responseData = await makePostRequest('verification/pan_verify', requestData);
 
-const makePanDetailsInfoApiRequest = async (id_number) => {
-  try {
-    const headers = getHeaders();
-    const requestData = {
-      id_number: id_number      ,
-      refid: Math.floor(Math.random() * 1000000000)
-    };
-    
-    // Make the axios request
-    const response = await axios.post('https://uat.paysprint.in/sprintverify-uat/api/v1/verification/pandetails_verify', requestData, { headers });
-    return response.data;
-  } catch (error) {
-    console.error("Error making API request:", error);
-    throw error;
-  }
-};
-
-// Function to save PAN verification result to the database
-const saveVerificationResult = async (requestData, responseData) => {
-  try {
-    // Create a new record in the database using the PanVerification model
-    await PanVerification.create({
+    await saveVerificationResult({
       request_id: requestData.refid,
       pannumber: requestData.pannumber,
       refid: responseData.reference_id,
@@ -68,47 +27,10 @@ const saveVerificationResult = async (requestData, responseData) => {
       message: responseData.message,
       response: responseData,
     });
-  } catch (error) {
-    console.error("Error saving verification result:", error);
-    throw error;
-  }
-};
 
-// Function to verify PAN number
-exports.verifyPanNumber = async (panNumber) => {
-  try {
-    // Check if PAN verification information already exists in the database
-    const existingVerification = await checkExistingVerification(panNumber);
-
-    if (existingVerification) {
-      // If verification information exists, return the stored response
-      console.log("Verification information already exists in the database.");
-      return existingVerification.response;
-    }
-
-    // If verification information doesn't exist, proceed with API request
-    const response = await makeVerifyPanNumberApiRequest(panNumber);
-
-    // Store the response in the database
-    await saveVerificationResult({ pannumber: panNumber }, response);
-
-    return response;
+    return responseData;
   } catch (error) {
     console.error("Error verifying PAN number:", error);
     throw error;
   }
-};
-
-exports.pandetailsinfo =async (id_number)=>{
-  try{
-    console.log("helloe");
-    const response = await makePanDetailsInfoApiRequest(id_number);
-    return response;
-
-
-  }catch (error) {
-    console.error("Error verifying PAN number:", error);
-    throw error;
-  }
-  
 };
