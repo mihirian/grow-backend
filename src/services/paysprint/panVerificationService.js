@@ -1,3 +1,5 @@
+
+
 const { makePostRequest } = require('../../common/apiService');
 const { findVerificationByPan, saveVerificationResult } = require('../../dao/panDatabaseService');
 
@@ -34,3 +36,36 @@ exports.verifyPanNumber = async (panNumber) => {
     throw error;
   }
 };
+
+
+exports.pandetailsinfo = async (id_number)=>{
+  try {
+
+
+    const requestData = {
+      id_number: id_number,
+      refid: Math.floor(Math.random() * 1000000000)
+    };
+    const responseData = await makePostRequest('verification/pandetails_verify', requestData);
+    return responseData;
+  }catch (error){
+    console.log("Error verifying PAN number:",error);
+    throw error;
+  }
+}
+
+
+exports.pandetailscomprehensive = async (pan_number) => {
+  try {
+    const requestData = {
+      pan_number: pan_number,
+      refid: Math.floor(Math.random() * 1000000000)
+    };
+    const responseData = await makePostRequest('verification/pan_comprehensive', requestData);
+    return responseData;
+  }catch (error){
+    console.log("Error verifying PAN number:",error);
+    throw error;
+  }
+}
+

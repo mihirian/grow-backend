@@ -24,3 +24,15 @@ exports.verifyPanNumber = async (req, res, next) => {
       next(error);
     }
   };
+
+
+exports.pandetailscomprehensive= async (req, res, next) => {
+  try {
+    const { pan_number } = req.body;
+    console.log(pan_number)
+    const response = await panVerificationService.pandetailscomprehensive(pan_number);
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+};
