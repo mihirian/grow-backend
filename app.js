@@ -7,6 +7,10 @@ const morgan = require('morgan');
 const { errorHandler } = require('./src/middlewares/errorHandler');
 const userRoutes = require('./src/routes/userRoutes');
 const panVerificationRoutes = require('./src/routes/panVerificationRoutes');
+const aadharVerificationRoutes = require('./src/routes/aadharVerificationRoutes');
+const commonVerificationRoutes = require('./src/routes/commonVerificationRoutes');
+
+
 
 const app = express();
 
@@ -19,6 +23,8 @@ app.use(morgan('tiny'));
 app.use('/api/users', userRoutes); // Setting up user routes
 
 app.use('/pan', panVerificationRoutes);
+app.use('/aadhar',aadharVerificationRoutes);
+app.use('/common',commonVerificationRoutes);
 
 
 app.use(errorHandler); // Global error handler
